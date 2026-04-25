@@ -12,12 +12,11 @@ public abstract class Activity {
 	
 	private Prisoner prisoner;
 	
-	public Activity(UUID id, UUID prisonerId, LocalDate date, Prisoner prisoner) {
+	public Activity(UUID id, UUID prisonerId, LocalDate date) {
 		super();
 		this.id = id;
 		this.prisonerId = prisonerId;
 		this.date = date;
-		this.prisoner = prisoner;
 	}
 
 	public UUID getId() {

@@ -26,6 +26,8 @@ CREATE TABLE Prisoners (
 CREATE TABLE Books (
     Id CHAR(36) PRIMARY KEY,
     Isbn CHAR(11) NOT NULL,
+    Title CHAR(100) NOT NULL,
+    Author CHAR(50) NOT NULL,
     PrisonerId CHAR(36) NOT NULL,
     Date DATETIME NOT NULL,
     CONSTRAINT FK_Books_Prisoners

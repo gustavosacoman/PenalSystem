@@ -1,11 +1,10 @@
 import com.sun.net.httpserver.HttpServer;
 
-import api.controllers.PrisonerController;
+import api.controllers.*;
 import infrastructure.ConnectionFactory;
 
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class Main {
@@ -16,7 +15,10 @@ public class Main {
             ConnectionFactory.applyMigrations();
 
             HttpServer server = HttpServer.create(new InetSocketAddress(5000),0);
+            
             server.createContext("/prisoners", new PrisonerController());
+            server.createContext("/books", new BookController());
+            
             server.createContext("/ping", exchange -> {
                 if ("GET".equals(exchange.getRequestMethod())) {
                     String response = "pong";
