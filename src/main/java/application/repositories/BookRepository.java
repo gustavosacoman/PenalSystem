@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BookRepository {
-    void save(Book book);
-    List<Book> findByPrisonerId(UUID prisonerId);
+    void add(Book book);
+    List<Book> getAll();
+    Book getById(UUID id);
+    List<Book> getByPrisonerId(UUID prisonerId);
+    void update(Book book);
+    void delete(UUID id);
 }
