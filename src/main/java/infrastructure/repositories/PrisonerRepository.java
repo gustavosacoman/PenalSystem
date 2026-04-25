@@ -1,11 +1,12 @@
-package infrastructure.Repositories;
+package infrastructure.repositories;
 
-import Domain.Entities.Prisoner;
 import infrastructure.ConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import domain.entities.Prisoner;
 
 public class PrisonerRepository {
 

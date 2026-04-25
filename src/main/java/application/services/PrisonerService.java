@@ -1,12 +1,13 @@
-package Application.Services;
+package application.services;
 
-import Application.Dtos.CreatePrisonerDto;
-import Domain.Entities.Prisoner;
-import infrastructure.Repositories.PrisonerRepository;
+import domain.entities.Prisoner;
+import infrastructure.repositories.PrisonerRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.UUID;
+
+import application.dtos.CreatePrisonerDto;
 
 public class PrisonerService {
     private final PrisonerRepository prisonerRepository = new PrisonerRepository();

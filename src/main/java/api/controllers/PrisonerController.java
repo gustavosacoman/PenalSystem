@@ -1,8 +1,9 @@
-package Api.Controllers;
+package api.controllers;
 
-import Application.Dtos.CreatePrisonerDto;
-import Application.Services.PrisonerService;
-import Domain.Entities.Prisoner;
+import application.dtos.CreatePrisonerDto;
+import application.services.PrisonerService;
+import domain.entities.Prisoner;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

@@ -1,5 +1,6 @@
-import Api.Controllers.PrisonerController;
 import com.sun.net.httpserver.HttpServer;
+
+import api.controllers.PrisonerController;
 import infrastructure.ConnectionFactory;
 
 import java.io.OutputStream;
