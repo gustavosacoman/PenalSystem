@@ -12,6 +12,8 @@ public abstract class Activity {
 	
 	private Prisoner prisoner;
 	
+	public Activity() {}
+	
 	public Activity(UUID id, UUID prisonerId, LocalDate date) {
 		super();
 		this.id = id;

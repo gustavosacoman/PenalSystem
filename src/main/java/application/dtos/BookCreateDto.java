@@ -11,6 +11,8 @@ public class BookCreateDto {
 	private String title;
 	private String author;
 	
+	public BookCreateDto() {}
+	
 	public BookCreateDto(LocalDate date, UUID prisonerId, String isbn, String title, String author) {
 		super();
 		this.id = UUID.randomUUID();

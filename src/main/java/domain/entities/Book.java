@@ -10,6 +10,8 @@ public class Book extends Activity {
 	private String title;
 	private String author;
 	
+	public Book() {}
+	
 	public Book(UUID id, UUID prisonerId, LocalDate date, String isbn, String title, String author) {
 		super(id, prisonerId, date);
 		this.isbn = isbn;
