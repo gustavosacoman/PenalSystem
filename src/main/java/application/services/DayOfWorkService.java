@@ -2,8 +2,10 @@ package application.services;
 
 import application.dtos.DayOfWorkCreateDto;
 import domain.entities.DayOfWork;
+import domain.entities.Prisoner;
 import infrastructure.repositories.DayOfWorkRepositoryImpl;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,9 +14,11 @@ public class DayOfWorkService {
     private static final int WORK_DAYS_REDUCTION = 1;
 
     private final DayOfWorkRepositoryImpl dayOfWorkRepository;
+    private final PrisonerService prisonerService;
 
     public DayOfWorkService() {
         this.dayOfWorkRepository = new DayOfWorkRepositoryImpl();
+        this.prisonerService = new PrisonerService();
     }
 
     public DayOfWork createDayOfWork(DayOfWorkCreateDto dto) {
@@ -22,10 +26,12 @@ public class DayOfWorkService {
             throw new IllegalArgumentException("Invalid day of work creation request");
         }
 
-        // TODO: Descomentar depois de implementarem PrisonerRepository (getById/update)
-        /*
-         * Prisoner prisoner = prisonerRepository.getById(dto.getPrisonerId());
-         */
+        Prisoner prisoner;
+        try {
+            prisoner = prisonerService.getPrisonerById(dto.getPrisonerId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         DayOfWork dayOfWork = new DayOfWork(
                 UUID.randomUUID(),
@@ -35,12 +41,13 @@ public class DayOfWorkService {
 
         dayOfWorkRepository.add(dayOfWork);
 
-        // TODO: Descomentar depois de implementarem PrisonerRepository (getById/update)
-        /*
-         * prisoner.setUpdatedReleaseDate(prisoner.getUpdatedReleaseDate().minusDays(
-         * WORK_DAYS_REDUCTION));
-         * prisonerRepository.update(prisoner);
-         */
+        try {
+            prisonerService.updateReleaseDateById(
+                    prisoner.getId(),
+                    prisoner.getUpdatedReleaseDate().minusDays(WORK_DAYS_REDUCTION));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         return dayOfWork;
     }
@@ -74,19 +81,23 @@ public class DayOfWorkService {
         existing.setDate(dto.getDate());
 
         if (!oldPrisonerId.equals(newPrisonerId)) {
-            // TODO: Descomentar depois de implementarem PrisonerRepository (getById/update)
-            /*
-             * Prisoner oldPrisoner = prisonerRepository.getById(oldPrisonerId);
-             * Prisoner newPrisoner = prisonerRepository.getById(newPrisonerId);
-             * 
-             * oldPrisoner.setUpdatedReleaseDate(oldPrisoner.getUpdatedReleaseDate().
-             * plusDays(WORK_DAYS_REDUCTION));
-             * newPrisoner.setUpdatedReleaseDate(newPrisoner.getUpdatedReleaseDate().
-             * minusDays(WORK_DAYS_REDUCTION));
-             * 
-             * prisonerRepository.update(oldPrisoner);
-             * prisonerRepository.update(newPrisoner);
-             */
+            Prisoner oldPrisoner;
+            Prisoner newPrisoner;
+            try {
+                oldPrisoner = prisonerService.getPrisonerById(oldPrisonerId);
+                newPrisoner = prisonerService.getPrisonerById(newPrisonerId);
+
+                prisonerService.updateReleaseDateById(
+                        oldPrisoner.getId(),
+                        oldPrisoner.getUpdatedReleaseDate().plusDays(WORK_DAYS_REDUCTION));
+
+                prisonerService.updateReleaseDateById(
+                        newPrisoner.getId(),
+                        newPrisoner.getUpdatedReleaseDate().minusDays(WORK_DAYS_REDUCTION));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
             existing.setPrisonerId(newPrisonerId);
         }
 
@@ -98,14 +109,16 @@ public class DayOfWorkService {
     public void deleteDayOfWork(UUID dayOfWorkId) {
         DayOfWork dayOfWork = dayOfWorkRepository.getById(dayOfWorkId);
 
-        // TODO: Descomentar depois de implementarem PrisonerRepository (getById/update)
-        /*
-         * Prisoner prisoner = prisonerRepository.getById(dayOfWork.getPrisonerId());
-         * 
-         * prisoner.setUpdatedReleaseDate(prisoner.getUpdatedReleaseDate().plusDays(
-         * WORK_DAYS_REDUCTION));
-         * prisonerRepository.update(prisoner);
-         */
+        Prisoner prisoner;
+        try {
+            prisoner = prisonerService.getPrisonerById(dayOfWork.getPrisonerId());
+
+            prisonerService.updateReleaseDateById(
+                    prisoner.getId(),
+                    prisoner.getUpdatedReleaseDate().plusDays(WORK_DAYS_REDUCTION));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         dayOfWorkRepository.delete(dayOfWorkId);
     }
