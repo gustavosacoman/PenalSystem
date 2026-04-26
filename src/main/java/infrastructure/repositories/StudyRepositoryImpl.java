@@ -8,20 +8,21 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalDate;
 
 public class StudyRepositoryImpl implements StudyRepository {
 
     @Override
     public void add(Study study) {
-        String sql = "INSERT INTO Studies (Id, Subject ,PrisonerId, Date) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Studies (Id, Subject ,PrisonerId, Date) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, study.getId().toString());
             stmt.setString(2, study.getSubject());
-            stmt.setString(5, study.getPrisonerId().toString());
-            stmt.setTimestamp(6, Timestamp.valueOf(study.getDate().atStartOfDay()));
+            stmt.setString(3, study.getPrisonerId().toString());
+            stmt.setTimestamp(4, Timestamp.valueOf(study.getDate().atStartOfDay()));
 
             stmt.executeUpdate();
 
