@@ -1,4 +1,4 @@
-package application.dtos;
+package application.dtos.Prisoner;
 
 import java.time.LocalDate;
 
@@ -7,5 +7,6 @@ public record CreatePrisonerDto (
     String cpf,
     LocalDate birthDate,
     LocalDate arrivalDate,
-    int sentenceYears
+    LocalDate originalReleaseDate,
+    int currentYear
 ) {}
