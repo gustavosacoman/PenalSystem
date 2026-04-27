@@ -1,23 +1,22 @@
 package api.controllers;
 
-import application.dtos.BookCreateDto;
-import application.services.BookService;
-import domain.entities.Book;
-
+import application.dtos.StudyCreateDto;
+import application.services.StudyService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import domain.entities.Study;
 
-import java.io.*;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.UUID;
 
-public class BookController implements HttpHandler {
+public class StudyController implements HttpHandler {
 
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private final BookService service = new BookService();
+    private final StudyService service = new StudyService();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -31,7 +30,7 @@ public class BookController implements HttpHandler {
             } else if ("GET".equalsIgnoreCase(method)) {
                 if (exchange.getRequestURI().getQuery() != null) {
                     getByPrisoner(exchange);
-                } else if (path.matches("/books/[^/]+")) {
+                } else if (path.matches("/studies/[^/]+")) {
                     getById(exchange);
                 } else {
                     getAll(exchange);
@@ -48,43 +47,43 @@ public class BookController implements HttpHandler {
         }
     }
 
-    private void create(HttpExchange exchange) throws IOException, SQLException {
-        BookCreateDto dto = mapper.readValue(exchange.getRequestBody(), BookCreateDto.class);
-        Book book = service.createBook(dto);
-        send(exchange, mapper.writeValueAsString(book), 201);
+    private void create(HttpExchange exchange) throws IOException {
+        StudyCreateDto dto = mapper.readValue(exchange.getRequestBody(), StudyCreateDto.class);
+        Study study = service.createStudy(dto);
+        send(exchange, mapper.writeValueAsString(study), 201);
     }
 
     private void getAll(HttpExchange exchange) throws IOException {
-        List<Book> books = service.getAll();
-        send(exchange, mapper.writeValueAsString(books), 200);
+        List<Study> studies = service.getAll();
+        send(exchange, mapper.writeValueAsString(studies), 200);
     }
 
     private void getById(HttpExchange exchange) throws IOException {
         String idStr = exchange.getRequestURI().getPath().split("/")[2];
-        Book book = service.getById(UUID.fromString(idStr));
-        send(exchange, mapper.writeValueAsString(book), 200);
+        Study study = service.getById(UUID.fromString(idStr));
+        send(exchange, mapper.writeValueAsString(study), 200);
     }
 
     private void getByPrisoner(HttpExchange exchange) throws IOException {
         String query = exchange.getRequestURI().getQuery();
         String idStr = query.split("=")[1];
-        List<Book> books = service.getByPrisonerId(UUID.fromString(idStr));
-        send(exchange, mapper.writeValueAsString(books), 200);
+        List<Study> studies = service.getByPrisonerId(UUID.fromString(idStr));
+        send(exchange, mapper.writeValueAsString(studies), 200);
     }
 
-    private void update(HttpExchange exchange) throws IOException, SQLException {
+    private void update(HttpExchange exchange) throws IOException {
         String idStr = exchange.getRequestURI().getPath().split("/")[2];
-        BookCreateDto dto = mapper.readValue(exchange.getRequestBody(), BookCreateDto.class);
+        StudyCreateDto dto = mapper.readValue(exchange.getRequestBody(), StudyCreateDto.class);
 
-        Book updated = service.updateBook(UUID.fromString(idStr), dto);
+        Study updated = service.updateStudy(UUID.fromString(idStr), dto);
 
         send(exchange, mapper.writeValueAsString(updated), 200);
     }
 
-    private void delete(HttpExchange exchange) throws IOException, SQLException {
+    private void delete(HttpExchange exchange) throws IOException {
         String idStr = exchange.getRequestURI().getPath().split("/")[2];
 
-        service.deleteBook(UUID.fromString(idStr));
+        service.deleteStudy(UUID.fromString(idStr));
 
         send(exchange, "{\"message\":\"Deleted\"}", 200);
     }
