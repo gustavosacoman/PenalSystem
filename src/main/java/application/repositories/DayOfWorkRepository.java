@@ -7,14 +7,8 @@ import java.util.UUID;
 
 public interface DayOfWorkRepository {
     void add(DayOfWork dayOfWork);
-
     List<DayOfWork> getAll();
-
     DayOfWork getById(UUID id);
-
-    List<DayOfWork> getByPrisonerId(UUID prisonerId);
-
-    void update(DayOfWork dayOfWork);
-
+    List<DayOfWork> getByPrisonerCpf(String cpf);
     void delete(UUID id);
 }

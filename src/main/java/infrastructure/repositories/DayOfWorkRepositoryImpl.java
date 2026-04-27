@@ -77,14 +77,14 @@ public class DayOfWorkRepositoryImpl implements DayOfWorkRepository {
     }
 
     @Override
-    public List<DayOfWork> getByPrisonerId(UUID prisonerId) {
-        String sql = "SELECT * FROM DaysOfWork WHERE PrisonerId = ?";
+    public List<DayOfWork> getByPrisonerCpf(String cpf) {
+        String sql = "SELECT d.* FROM DaysOfWork d INNER JOIN Prisoners p ON d.PrisonerId = p.Id WHERE p.CPF = ?";
         List<DayOfWork> daysOfWork = new ArrayList<>();
 
         try (Connection conn = ConnectionFactory.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, prisonerId.toString());
+            stmt.setString(1, cpf);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -96,25 +96,6 @@ public class DayOfWorkRepositoryImpl implements DayOfWorkRepository {
         }
 
         return daysOfWork;
-    }
-
-    @Override
-    public void update(DayOfWork dayOfWork) {
-        String sql = "UPDATE DaysOfWork SET Description = ?, PrisonerId = ?, Date = ? WHERE Id = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, dayOfWork.getDescription());
-            stmt.setString(2, dayOfWork.getPrisonerId().toString());
-            stmt.setTimestamp(3, Timestamp.valueOf(dayOfWork.getDate().atStartOfDay()));
-            stmt.setString(4, dayOfWork.getId().toString());
-
-            stmt.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override

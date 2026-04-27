@@ -1,19 +1,18 @@
 package application.dtos;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 public class DayOfWorkCreateDto {
     private LocalDate date;
-    private UUID prisonerId;
+    private String cpf;
     private String description;
 
     public DayOfWorkCreateDto() {
     }
 
-    public DayOfWorkCreateDto(LocalDate date, UUID prisonerId, String description) {
+    public DayOfWorkCreateDto(LocalDate date, String cpf, String description) {
         this.date = date;
-        this.prisonerId = prisonerId;
+        this.cpf = cpf;
         this.description = description;
     }
 
@@ -25,12 +24,12 @@ public class DayOfWorkCreateDto {
         this.date = date;
     }
 
-    public UUID getPrisonerId() {
-        return prisonerId;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setPrisonerId(UUID prisonerId) {
-        this.prisonerId = prisonerId;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getDescription() {
