@@ -129,7 +129,31 @@ public class PrisonerRepository {
         return null;
     }
 
+    public void DeletePrisonerBycpf(String cpf) throws  SQLException{
 
+        String query = "DELETE FROM Prisoners Where cpf = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)){
+
+            stmt.setString(1, cpf);
+
+            stmt.executeUpdate();
+        }
+    }
+
+    public void DeletePrisonerById(UUID id) throws  SQLException{
+
+        String query = "DELETE FROM Prisoners Where id = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)){
+
+            stmt.setString(1, id.toString());
+
+            stmt.executeUpdate();
+        }
+    }
 
 
 

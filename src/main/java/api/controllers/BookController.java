@@ -48,6 +48,7 @@ public class BookController implements HttpHandler {
         }
     }
 
+
     private void create(HttpExchange exchange) throws IOException, SQLException {
         BookCreateDto dto = mapper.readValue(exchange.getRequestBody(), BookCreateDto.class);
         Book book = service.createBook(dto);
@@ -76,17 +77,18 @@ public class BookController implements HttpHandler {
         String idStr = exchange.getRequestURI().getPath().split("/")[2];
         BookCreateDto dto = mapper.readValue(exchange.getRequestBody(), BookCreateDto.class);
 
-        Book updated = service.updateBook(UUID.fromString(idStr), dto);
+            Book updated = service.updateBook(UUID.fromString(idStr), dto);
 
-        send(exchange, mapper.writeValueAsString(updated), 200);
+            send(exchange, mapper.writeValueAsString(updated), 200);
     }
+
 
     private void delete(HttpExchange exchange) throws IOException, SQLException {
         String idStr = exchange.getRequestURI().getPath().split("/")[2];
 
-        service.deleteBook(UUID.fromString(idStr));
+            service.deleteBook(UUID.fromString(idStr));
 
-        send(exchange, "{\"message\":\"Deleted\"}", 200);
+            send(exchange, "{\"message\":\"Deleted\"}", 200);
     }
 
     private void send(HttpExchange exchange, String response, int status) throws IOException {

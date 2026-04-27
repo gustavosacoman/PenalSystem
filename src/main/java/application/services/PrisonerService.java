@@ -59,6 +59,14 @@ public class PrisonerService {
 
         Prisoner prisoner = new Prisoner();
 
+        if (addDto.arrivalDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Arrival date cannot be in the past.");
+        }
+
+        if (addDto.originalReleaseDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Original release date cannot be in the past.");
+        }
+
         prisoner.setId(UUID.randomUUID());
         prisoner.setName(addDto.name());
         prisoner.setCpf(addDto.cpf());
@@ -113,4 +121,30 @@ public class PrisonerService {
 
         prisonerRepository.update(actualPrisoner);
     }
+
+    public void DeletePrisonerByCpfOrId(String cpf, UUID id) throws  SQLException{
+
+        if (id == null && cpf.isBlank())
+        {
+            throw new NullPointerException("you need to specified the cpf or id");
+        }
+
+        if (id != null) {
+            prisonerRepository.DeletePrisonerById(id);
+        }
+        else {
+            prisonerRepository.DeletePrisonerBycpf(cpf);
+        }
+
+    }
+    public void DeletePrisonerById(UUID id) throws  SQLException{
+
+        if (id == null)
+        {
+            throw new NullPointerException("cpf cannot be null or blank");
+        }
+
+        prisonerRepository.DeletePrisonerById(id);
+    }
+
 }
