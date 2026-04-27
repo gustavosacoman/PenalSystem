@@ -32,6 +32,8 @@ public class PrisonerController implements HttpHandler {
             createPrisoner(exchange);
         else if (exchange.getRequestMethod().equals("PUT"))
             updatePrisoner(exchange);
+        else if (exchange.getRequestMethod().equals("DELETE"))
+            deletePrisonerByCpfOrId(exchange);
     }
 
     private IdentifierResult treatIdOrCpf(HttpExchange exchange) {
@@ -119,7 +121,19 @@ public class PrisonerController implements HttpHandler {
             send(exchange, "{\"error\": \"Internal server error.\"}", 500);
         }
     }
+    public void deletePrisonerByCpfOrId(HttpExchange exchange) throws IOException {
 
+        try {
+            var idOrCpf = treatIdOrCpf(exchange);
+
+            prisonerService.DeletePrisonerByCpfOrId(idOrCpf.cpf, idOrCpf.id);
+
+            send(exchange, "Prisoner deleted successful", 200);
+        }
+        catch (Exception e) {
+            send(exchange, "Error : " + e.getMessage(), 500);
+        }
+    }
     private void send(HttpExchange exchange, String response, int statusCode) throws IOException {
         exchange.getResponseHeaders().add("Content-Type", "application/json");
         exchange.sendResponseHeaders(statusCode, response.getBytes().length);
@@ -127,4 +141,5 @@ public class PrisonerController implements HttpHandler {
         os.write(response.getBytes());
         os.close();
     }
+
 }

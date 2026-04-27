@@ -48,13 +48,10 @@ public class BookController implements HttpHandler {
     }
 
     private void create(HttpExchange exchange) throws IOException {
-        try {
-            BookCreateDto dto = mapper.readValue(exchange.getRequestBody(), BookCreateDto.class);
-            Book book = service.createBook(dto);
-            send(exchange, mapper.writeValueAsString(book), 201);
-        }catch (Exception e) {
-            send(exchange, "Error: " + e.getMessage(), 500);
-        }
+
+        BookCreateDto dto = mapper.readValue(exchange.getRequestBody(), BookCreateDto.class);
+        Book book = service.createBook(dto);
+        send(exchange, mapper.writeValueAsString(book), 201);
     }
 
     private void getAll(HttpExchange exchange) throws IOException {
@@ -76,28 +73,20 @@ public class BookController implements HttpHandler {
     }
 
     private void update(HttpExchange exchange) throws IOException {
-        try {
             String idStr = exchange.getRequestURI().getPath().split("/")[2];
             BookCreateDto dto = mapper.readValue(exchange.getRequestBody(), BookCreateDto.class);
 
             Book updated = service.updateBook(UUID.fromString(idStr), dto);
 
             send(exchange, mapper.writeValueAsString(updated), 200);
-        }catch (Exception e) {
-            send(exchange, "Error: " + e.getMessage(), 500);
-        }
     }
 
     private void delete(HttpExchange exchange) throws IOException {
-        try {
             String idStr = exchange.getRequestURI().getPath().split("/")[2];
 
             service.deleteBook(UUID.fromString(idStr));
 
             send(exchange, "{\"message\":\"Deleted\"}", 200);
-        }catch (Exception e) {
-            send(exchange, "Error: " + e.getMessage(), 500);
-        }
     }
 
     private void send(HttpExchange exchange, String response, int status) throws IOException {
