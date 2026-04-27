@@ -19,7 +19,8 @@ public class Main {
             server.createContext("/prisoners", new PrisonerController());
             server.createContext("/books", new BookController());
             server.createContext("/studies", new StudyController());
-            
+            server.createContext("/days-of-work", new DayOfWorkController());
+
             server.createContext("/ping", exchange -> {
                 if ("GET".equals(exchange.getRequestMethod())) {
                     String response = "pong";

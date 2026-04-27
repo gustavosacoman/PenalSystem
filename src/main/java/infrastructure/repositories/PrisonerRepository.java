@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import domain.entities.Prisoner;
@@ -87,6 +88,17 @@ public class PrisonerRepository {
         }
         return null;
     }
+
+    public void updateReleaseDateById(UUID prisonerId, LocalDate updatedReleaseDate) throws SQLException {
+        String query = "UPDATE Prisoners SET UpdatedReleaseDate = ? WHERE id = ?";
+        try (Connection conn = ConnectionFactory.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setDate(1, java.sql.Date.valueOf(updatedReleaseDate));
+            stmt.setString(2, prisonerId.toString());
+            stmt.executeUpdate();
+        }
+    }
+
 
     public Prisoner getPrisonerBycpf(String cpf) throws SQLException{
         String query = "SELECT * from Prisoners WHERE cpf = ?";
