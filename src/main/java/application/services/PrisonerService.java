@@ -25,6 +25,18 @@ public class PrisonerService {
         return prisoner;
     }
 
+    public void updateReleaseDateById(UUID prisonerId, LocalDate updatedReleaseDate) throws SQLException {
+        if (prisonerId == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+
+        if (updatedReleaseDate == null) {
+            throw new IllegalArgumentException("Updated release date cannot be null");
+        }
+
+        prisonerRepository.updateReleaseDateById(prisonerId, updatedReleaseDate);
+    }
+
     public Prisoner getPrisonerByCpf(String cpf) throws SQLException {
         if (cpf == null || cpf.isBlank()){
             throw new NullPointerException("cpf cannot be null");
