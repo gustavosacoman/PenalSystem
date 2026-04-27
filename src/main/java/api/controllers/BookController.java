@@ -10,6 +10,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,7 +48,7 @@ public class BookController implements HttpHandler {
         }
     }
 
-    private void create(HttpExchange exchange) throws IOException {
+    private void create(HttpExchange exchange) throws IOException, SQLException {
         BookCreateDto dto = mapper.readValue(exchange.getRequestBody(), BookCreateDto.class);
         Book book = service.createBook(dto);
         send(exchange, mapper.writeValueAsString(book), 201);
@@ -71,7 +72,7 @@ public class BookController implements HttpHandler {
         send(exchange, mapper.writeValueAsString(books), 200);
     }
 
-    private void update(HttpExchange exchange) throws IOException {
+    private void update(HttpExchange exchange) throws IOException, SQLException {
         String idStr = exchange.getRequestURI().getPath().split("/")[2];
         BookCreateDto dto = mapper.readValue(exchange.getRequestBody(), BookCreateDto.class);
 
@@ -80,7 +81,7 @@ public class BookController implements HttpHandler {
         send(exchange, mapper.writeValueAsString(updated), 200);
     }
 
-    private void delete(HttpExchange exchange) throws IOException {
+    private void delete(HttpExchange exchange) throws IOException, SQLException {
         String idStr = exchange.getRequestURI().getPath().split("/")[2];
 
         service.deleteBook(UUID.fromString(idStr));
