@@ -1,6 +1,7 @@
 package api.controllers;
 
 import application.dtos.DayOfWorkCreateDto;
+import application.dtos.DayOfWorkUpdateDto;
 import application.services.DayOfWorkService;
 import domain.entities.DayOfWork;
 
@@ -38,6 +39,8 @@ public class DayOfWorkController implements HttpHandler {
                 } else {
                     getAll(exchange);
                 }
+            } else if ("PUT".equalsIgnoreCase(method)) {
+                update(exchange);
             } else if ("DELETE".equalsIgnoreCase(method)) {
                 delete(exchange);
             } else {
@@ -76,6 +79,15 @@ public class DayOfWorkController implements HttpHandler {
         String cpf = query.substring("cpf=".length());
         List<DayOfWork> daysOfWork = service.getByPrisonerCpf(cpf);
         send(exchange, mapper.writeValueAsString(toResponseList(daysOfWork)), 200);
+    }
+
+    private void update(HttpExchange exchange) throws IOException {
+        String idStr = exchange.getRequestURI().getPath().split("/")[2];
+        DayOfWorkUpdateDto dto = mapper.readValue(exchange.getRequestBody(), DayOfWorkUpdateDto.class);
+
+        DayOfWork updated = service.updateDayOfWork(UUID.fromString(idStr), dto);
+
+        send(exchange, mapper.writeValueAsString(toResponseDto(updated)), 200);
     }
 
     private void delete(HttpExchange exchange) throws IOException {

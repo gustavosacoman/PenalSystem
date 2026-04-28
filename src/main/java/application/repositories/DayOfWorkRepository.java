@@ -10,5 +10,6 @@ public interface DayOfWorkRepository {
     List<DayOfWork> getAll();
     DayOfWork getById(UUID id);
     List<DayOfWork> getByPrisonerCpf(String cpf);
+    void update(DayOfWork dayOfWork);
     void delete(UUID id);
 }

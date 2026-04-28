@@ -1,6 +1,7 @@
 package application.services;
 
 import application.dtos.DayOfWorkCreateDto;
+import application.dtos.DayOfWorkUpdateDto;
 import domain.entities.DayOfWork;
 import domain.entities.Prisoner;
 import infrastructure.repositories.DayOfWorkRepositoryImpl;
@@ -91,6 +92,27 @@ public class DayOfWorkService {
         }
 
         return dayOfWorkRepository.getByPrisonerCpf(cpf);
+    }
+
+    public DayOfWork updateDayOfWork(UUID dayOfWorkId, DayOfWorkUpdateDto dto) {
+        if (dayOfWorkId == null) {
+            throw new IllegalArgumentException("Invalid day of work ID");
+        }
+        if (dto == null) {
+            throw new IllegalArgumentException("Invalid update payload");
+        }
+
+        DayOfWork dayOfWork = dayOfWorkRepository.getById(dayOfWorkId);
+
+        if (dto.getDate() != null) {
+            dayOfWork.setDate(dto.getDate());
+        }
+        if (dto.getDescription() != null && !dto.getDescription().isBlank()) {
+            dayOfWork.setDescription(dto.getDescription());
+        }
+
+        dayOfWorkRepository.update(dayOfWork);
+        return dayOfWork;
     }
 
     public void deleteDayOfWork(UUID dayOfWorkId) {

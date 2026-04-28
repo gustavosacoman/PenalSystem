@@ -99,6 +99,24 @@ public class DayOfWorkRepositoryImpl implements DayOfWorkRepository {
     }
 
     @Override
+    public void update(DayOfWork dayOfWork) {
+        String sql = "UPDATE DaysOfWork SET Description = ?, Date = ? WHERE Id = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, dayOfWork.getDescription());
+            stmt.setTimestamp(2, Timestamp.valueOf(dayOfWork.getDate().atStartOfDay()));
+            stmt.setString(3, dayOfWork.getId().toString());
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void delete(UUID id) {
         String sql = "DELETE FROM DaysOfWork WHERE Id = ?";
 
