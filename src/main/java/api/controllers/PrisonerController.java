@@ -27,7 +27,14 @@ public class PrisonerController implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         if(exchange.getRequestMethod().equals("GET")){
-            getPrisonerByIdOrCpf(exchange);
+            String path = exchange.getRequestURI().getPath();
+            String[] segments = path.split("/");
+            String last = segments.length == 0 ? "" : segments[segments.length - 1];
+            if (last.equals("prisoners") || last.isBlank()) {
+                getAllPrisoners(exchange);
+            } else {
+                getPrisonerByIdOrCpf(exchange);
+            }
         } else if(exchange.getRequestMethod().equals("POST"))
             createPrisoner(exchange);
         else if (exchange.getRequestMethod().equals("PUT"))
@@ -56,13 +63,24 @@ public class PrisonerController implements HttpHandler {
     }
 
 
+    private void getAllPrisoners(HttpExchange exchange) throws IOException {
+        try {
+            var prisoners = prisonerService.getAll();
+            String response = mapper.writeValueAsString(prisoners);
+            send(exchange, response, 200);
+        } catch (Exception e) {
+            send(exchange, "{\"error\": \"" + e.getMessage() + "\"}", 500);
+        }
+    }
+
     private void getPrisonerByIdOrCpf(HttpExchange exchange) throws  IOException {
 
         try {
             var idOrCpf = treatIdOrCpf(exchange);
 
             if (idOrCpf == null) {
-                send(exchange, "{\"error\": \"id or cpf in url cannot be null: ", 400);
+                send(exchange, "{\"error\": \"id or cpf in url cannot be null\"}", 400);
+                return;
             }
 
             Prisoner p = null;

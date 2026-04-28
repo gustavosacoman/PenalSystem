@@ -6,12 +6,17 @@ import infrastructure.repositories.PrisonerRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import application.dtos.Prisoner.CreatePrisonerDto;
 
 public class PrisonerService {
     private final PrisonerRepository prisonerRepository = new PrisonerRepository();
+
+    public List<Prisoner> getAll() throws SQLException {
+        return prisonerRepository.getAll();
+    }
 
     public Prisoner getPrisonerById(UUID id) throws SQLException{
         if (id == null){

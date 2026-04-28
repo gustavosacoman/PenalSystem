@@ -6,7 +6,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import domain.entities.Prisoner;
@@ -57,6 +60,36 @@ public class PrisonerRepository {
             stmt.setString(9, p.getCpf());
             stmt.executeUpdate();
         }
+    }
+
+    public List<Prisoner> getAll() throws SQLException {
+        String query = "SELECT * FROM Prisoners";
+        List<Prisoner> prisoners = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                prisoners.add(mapRow(rs));
+            }
+        }
+
+        return prisoners;
+    }
+
+    private Prisoner mapRow(ResultSet rs) throws SQLException {
+        Prisoner p = new Prisoner();
+        p.setId(UUID.fromString(rs.getString("id")));
+        p.setName(rs.getString("name"));
+        p.setCpf(rs.getString("cpf"));
+        p.setArrivalDate(rs.getDate("ArrivalDate").toLocalDate());
+        p.setBirthDate(rs.getDate("BirthDate").toLocalDate());
+        p.setOriginalReleaseDate(rs.getDate("OriginalReleaseDate").toLocalDate());
+        p.setUpdatedReleaseDate(rs.getDate("UpdatedReleaseDate").toLocalDate());
+        p.setBooksCounter(rs.getInt("BooksCounter"));
+        p.setCurrentYear(rs.getInt("CurrentYear"));
+        return p;
     }
 
     public Prisoner getPrisonerById(UUID id) throws SQLException {
