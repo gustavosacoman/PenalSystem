@@ -99,14 +99,13 @@ public class StudyRepositoryImpl implements StudyRepository {
 
     @Override
     public void update(Study study) {
-        String sql = "UPDATE Studies SET Subject=?, PrisonerId=? WHERE Id=?";
+        String sql = "UPDATE Studies SET Subject=? WHERE Id=?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, study.getSubject());
-            stmt.setString(2, study.getPrisonerId().toString());
-            stmt.setString(3, study.getId().toString());
+            stmt.setString(2, study.getId().toString());
 
             stmt.executeUpdate();
 
