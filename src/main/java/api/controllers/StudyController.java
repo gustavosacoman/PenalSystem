@@ -10,6 +10,7 @@ import domain.entities.Study;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,7 +48,7 @@ public class StudyController implements HttpHandler {
         }
     }
 
-    private void create(HttpExchange exchange) throws IOException {
+    private void create(HttpExchange exchange) throws IOException, SQLException {
         StudyCreateDto dto = mapper.readValue(exchange.getRequestBody(), StudyCreateDto.class);
         Study study = service.createStudy(dto);
         send(exchange, mapper.writeValueAsString(study), 201);
@@ -80,7 +81,7 @@ public class StudyController implements HttpHandler {
         send(exchange, mapper.writeValueAsString(updated), 200);
     }
 
-    private void delete(HttpExchange exchange) throws IOException {
+    private void delete(HttpExchange exchange) throws IOException, SQLException {
         String idStr = exchange.getRequestURI().getPath().split("/")[2];
 
         service.deleteStudy(UUID.fromString(idStr));
