@@ -3,9 +3,11 @@ package application.services;
 import application.dtos.StudyCreateDto;
 import application.repositories.StudyRepository;
 import infrastructure.repositories.StudyRepositoryImpl;
+import domain.entities.Prisoner;
 import domain.entities.Study;
 import infrastructure.repositories.PrisonerRepository;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,20 +21,13 @@ public class StudyService {
         this.prisonerRepository = new PrisonerRepository();
     }
 
-    public Study createStudy(StudyCreateDto dto) {
+    public Study createStudy(StudyCreateDto dto) throws SQLException {
 
         if (dto == null || dto.getPrisonerId() == null) {
             throw new IllegalArgumentException("Invalid study creation request");
         }
 
-        // TODO: Estou implmentando para o Study ainda
-        /*
-        Prisoner prisoner = prisonerRepository.getById(dto.getPrisonerId());
-
-        if (prisoner.getCurrentYear() != LocalDate.now().getYear()) {
-            prisoner.setBooksCounter(0);
-        }
-        */
+        Prisoner prisoner = prisonerRepository.getPrisonerById(dto.getPrisonerId());
 
         Study study = new Study(
                 UUID.randomUUID(),
@@ -42,6 +37,11 @@ public class StudyService {
         );
 
         studyRepository.add(study);
+
+        prisoner.setUpdatedReleaseDate(prisoner.getUpdatedReleaseDate().minusDays(1));
+
+        prisonerRepository.update(prisoner);
+
         return study;
     }
 
@@ -63,57 +63,21 @@ public class StudyService {
 
         Study existing = studyRepository.getById(studyId);
 
-        UUID oldPrisonerId = existing.getPrisonerId();
-        UUID newPrisonerId = dto.getPrisonerId();
         existing.setSubject(dto.getSubject());
-
-
-        if (!oldPrisonerId.equals(newPrisonerId)) {
-
-            // TODO: Descomentar depois do Sacoman implementar
-            /*
-            Prisoner oldPrisoner = prisonerRepository.getById(oldPrisonerId);
-            Prisoner newPrisoner = prisonerRepository.getById(newPrisonerId);
-
-            oldPrisoner.setBooksCounter(oldPrisoner.getBooksCounter() - 1);
-            oldPrisoner.setUpdatedReleaseDate(oldPrisoner.getUpdatedReleaseDate().plusDays(3));
-
-            if (newPrisoner.getCurrentYear() != LocalDate.now().getYear()) {
-                newPrisoner.setBooksCounter(0);
-            }
-
-            if (newPrisoner.getBooksCounter() >= 12) {
-                throw new MaxNumberOfBooksException();
-            }
-
-            newPrisoner.setBooksCounter(newPrisoner.getBooksCounter() + 1);
-            newPrisoner.setUpdatedReleaseDate(newPrisoner.getUpdatedReleaseDate().minusDays(3));
-
-            prisonerRepository.update(oldPrisoner);
-            prisonerRepository.update(newPrisoner);
-
-            */
-            existing.setPrisonerId(newPrisonerId);
-        }
-
         studyRepository.update(existing);
 
         return existing;
     }
 
-    public void deleteStudy(UUID studyId) {
+    public void deleteStudy(UUID studyId) throws SQLException {
 
         Study study = studyRepository.getById(studyId);
 
-         // TODO: Descomentar depois do Sacoman implementar
-        /*
-        Prisoner prisoner = prisonerRepository.getById(book.getPrisonerId());
+        Prisoner prisoner = prisonerRepository.getPrisonerById(study.getPrisonerId());
 
-        prisoner.setBooksCounter(prisoner.getBooksCounter() - 1);
         prisoner.setUpdatedReleaseDate(prisoner.getUpdatedReleaseDate().plusDays(3));
 
         prisonerRepository.update(prisoner);
-         */
 
         studyRepository.delete(studyId);
     }
