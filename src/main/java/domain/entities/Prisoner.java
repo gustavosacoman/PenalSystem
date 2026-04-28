@@ -4,15 +4,15 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public class Prisoner {
-    public UUID id;
-    public String name;
-    public LocalDate birthDate;
-    public String cpf;
-    public LocalDate arrivalDate;
-    public LocalDate originalReleaseDate;
-    public LocalDate updatedReleaseDate;
-    public int booksCounter;
-    public int currentYear;
+    private UUID id;
+    private String name;
+    private LocalDate birthDate;
+    private String cpf;
+    private LocalDate arrivalDate;
+    private LocalDate originalReleaseDate;
+    private LocalDate updatedReleaseDate;
+    private int booksCounter;
+    private int currentYear;
 
 
     public Prisoner(){}
