@@ -1,9 +1,12 @@
 import com.sun.net.httpserver.HttpServer;
 
 import api.controllers.*;
+import application.messaging.EventPublisher;
 import application.repositories.*;
 import application.services.*;
 import infrastructure.ConnectionFactory;
+import infrastructure.messaging.RabbitMqEventPublisher;
+import infrastructure.messaging.ReleaseNotificationConsumer;
 import infrastructure.repositories.*;
 
 import java.io.OutputStream;
@@ -22,10 +25,21 @@ public class Main {
             StudyRepository studyRepository = new StudyRepositoryImpl();
             DayOfWorkRepository dayOfWorkRepository = new DayOfWorkRepositoryImpl();
 
+            EventPublisher eventPublisher = new RabbitMqEventPublisher();
+
             PrisonerService prisonerService = new PrisonerService(prisonerRepository);
-            BookService bookService = new BookService(bookRepository, prisonerRepository);
-            StudyService studyService = new StudyService(studyRepository, prisonerRepository);
-            DayOfWorkService dayOfWorkService = new DayOfWorkService(dayOfWorkRepository, prisonerService);
+            BookService bookService = new BookService(bookRepository, prisonerRepository, eventPublisher);
+            StudyService studyService = new StudyService(studyRepository, prisonerRepository, eventPublisher);
+            DayOfWorkService dayOfWorkService = new DayOfWorkService(dayOfWorkRepository, prisonerService, eventPublisher);
+
+            ReleaseNotificationConsumer notificationConsumer = new ReleaseNotificationConsumer();
+            new Thread(() -> {
+                try {
+                    notificationConsumer.start();
+                } catch (Exception e) {
+                    System.err.println("Consumer failed to start: " + e.getMessage());
+                }
+            }).start();
 
             HttpServer server = HttpServer.create(new InetSocketAddress(5000),0);
 

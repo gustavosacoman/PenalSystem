@@ -1,6 +1,9 @@
 package application.services;
 
 import application.dtos.BookCreateDto;
+import application.events.ActivityType;
+import application.events.ReleaseDateUpdatedEvent;
+import application.messaging.EventPublisher;
 import domain.entities.Book;
 import domain.entities.Prisoner;
 import domain.exceptions.MaxNumberOfBooksException;
@@ -16,10 +19,12 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final PrisonerRepository prisonerRepository;
+    private final EventPublisher eventPublisher;
 
-    public BookService(BookRepository bookRepository, PrisonerRepository prisonerRepository) {
+    public BookService(BookRepository bookRepository, PrisonerRepository prisonerRepository, EventPublisher eventPublisher) {
         this.bookRepository = bookRepository;
         this.prisonerRepository = prisonerRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public Book createBook(BookCreateDto dto) throws SQLException {
@@ -55,6 +60,13 @@ public class BookService {
         prisoner.setUpdatedReleaseDate(prisoner.getUpdatedReleaseDate().minusDays(3));
 
         prisonerRepository.update(prisoner);
+
+        eventPublisher.publish(new ReleaseDateUpdatedEvent(
+                prisoner.getId(),
+                prisoner.getUpdatedReleaseDate(),
+                ActivityType.BOOK,
+                3
+        ));
 
         return book;
     }

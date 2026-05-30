@@ -7,6 +7,9 @@ import java.util.UUID;
 
 import application.dtos.DayOfWorkCreateDto;
 import application.dtos.DayOfWorkUpdateDto;
+import application.events.ActivityType;
+import application.events.ReleaseDateUpdatedEvent;
+import application.messaging.EventPublisher;
 import application.repositories.DayOfWorkRepository;
 import domain.entities.DayOfWork;
 import domain.entities.Prisoner;
@@ -17,10 +20,12 @@ public class DayOfWorkService {
 
     private final DayOfWorkRepository dayOfWorkRepository;
     private final PrisonerService prisonerService;
+    private final EventPublisher eventPublisher;
 
-    public DayOfWorkService(DayOfWorkRepository dayOfWorkRepository, PrisonerService prisonerService) {
+    public DayOfWorkService(DayOfWorkRepository dayOfWorkRepository, PrisonerService prisonerService, EventPublisher eventPublisher) {
         this.dayOfWorkRepository = dayOfWorkRepository;
         this.prisonerService = prisonerService;
+        this.eventPublisher = eventPublisher;
     }
 
     public DayOfWork createDayOfWork(DayOfWorkCreateDto dto) {
@@ -50,6 +55,13 @@ public class DayOfWorkService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        eventPublisher.publish(new ReleaseDateUpdatedEvent(
+                prisoner.getId(),
+                prisoner.getUpdatedReleaseDate().minusDays(WORK_DAYS_REDUCTION),
+                ActivityType.DAY_OF_WORK,
+                WORK_DAYS_REDUCTION
+        ));
 
         return dayOfWork;
     }

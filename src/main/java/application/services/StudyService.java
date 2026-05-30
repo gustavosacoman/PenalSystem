@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import application.dtos.StudyCreateDto;
+import application.events.ActivityType;
+import application.events.ReleaseDateUpdatedEvent;
+import application.messaging.EventPublisher;
 import application.repositories.PrisonerRepository;
 import application.repositories.StudyRepository;
 import domain.entities.Prisoner;
@@ -14,10 +17,12 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final PrisonerRepository prisonerRepository;
+    private final EventPublisher eventPublisher;
 
-    public StudyService(StudyRepository studyRepository, PrisonerRepository prisonerRepository) {
+    public StudyService(StudyRepository studyRepository, PrisonerRepository prisonerRepository, EventPublisher eventPublisher) {
         this.studyRepository = studyRepository;
         this.prisonerRepository = prisonerRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public Study createStudy(StudyCreateDto dto) throws SQLException {
@@ -40,6 +45,13 @@ public class StudyService {
         prisoner.setUpdatedReleaseDate(prisoner.getUpdatedReleaseDate().minusDays(1));
 
         prisonerRepository.update(prisoner);
+
+        eventPublisher.publish(new ReleaseDateUpdatedEvent(
+                prisoner.getId(),
+                prisoner.getUpdatedReleaseDate(),
+                ActivityType.STUDY,
+                1
+        ));
 
         return study;
     }
