@@ -1,8 +1,8 @@
 package application.services;
 
 import application.dtos.Prisoner.UpdatePrisonerDto;
+import application.repositories.PrisonerRepository;
 import domain.entities.Prisoner;
-import infrastructure.repositories.PrisonerRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -12,7 +12,11 @@ import java.util.UUID;
 import application.dtos.Prisoner.CreatePrisonerDto;
 
 public class PrisonerService {
-    private final PrisonerRepository prisonerRepository = new PrisonerRepository();
+    private final PrisonerRepository prisonerRepository;
+
+    public PrisonerService(PrisonerRepository prisonerRepository) {
+        this.prisonerRepository = prisonerRepository;
+    }
 
     public List<Prisoner> getAll() throws SQLException {
         return prisonerRepository.getAll();

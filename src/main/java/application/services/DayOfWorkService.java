@@ -1,26 +1,26 @@
 package application.services;
 
-import application.dtos.DayOfWorkCreateDto;
-import application.dtos.DayOfWorkUpdateDto;
-import domain.entities.DayOfWork;
-import domain.entities.Prisoner;
-import infrastructure.repositories.DayOfWorkRepositoryImpl;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import application.dtos.DayOfWorkCreateDto;
+import application.dtos.DayOfWorkUpdateDto;
+import application.repositories.DayOfWorkRepository;
+import domain.entities.DayOfWork;
+import domain.entities.Prisoner;
+
 public class DayOfWorkService {
 
     private static final int WORK_DAYS_REDUCTION = 1;
 
-    private final DayOfWorkRepositoryImpl dayOfWorkRepository;
+    private final DayOfWorkRepository dayOfWorkRepository;
     private final PrisonerService prisonerService;
 
-    public DayOfWorkService() {
-        this.dayOfWorkRepository = new DayOfWorkRepositoryImpl();
-        this.prisonerService = new PrisonerService();
+    public DayOfWorkService(DayOfWorkRepository dayOfWorkRepository, PrisonerService prisonerService) {
+        this.dayOfWorkRepository = dayOfWorkRepository;
+        this.prisonerService = prisonerService;
     }
 
     public DayOfWork createDayOfWork(DayOfWorkCreateDto dto) {

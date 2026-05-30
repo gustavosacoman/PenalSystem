@@ -21,7 +21,11 @@ import java.util.UUID;
 public class DayOfWorkController implements HttpHandler {
 
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private final DayOfWorkService service = new DayOfWorkService();
+    private final DayOfWorkService service;
+
+    public DayOfWorkController(DayOfWorkService service) {
+        this.service = service;
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

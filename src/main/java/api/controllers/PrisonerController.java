@@ -21,7 +21,12 @@ public class PrisonerController implements HttpHandler {
     private ObjectMapper mapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    private PrisonerService prisonerService = new PrisonerService();
+    private final PrisonerService prisonerService;
+
+    public PrisonerController(PrisonerService prisonerService) {
+        this.prisonerService = prisonerService;
+    }
+
     private record IdentifierResult(UUID id, String cpf) {}
 
     @Override

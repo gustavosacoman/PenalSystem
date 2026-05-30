@@ -1,24 +1,23 @@
 package application.services;
 
-import application.dtos.StudyCreateDto;
-import application.repositories.StudyRepository;
-import infrastructure.repositories.StudyRepositoryImpl;
-import domain.entities.Prisoner;
-import domain.entities.Study;
-import infrastructure.repositories.PrisonerRepository;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+
+import application.dtos.StudyCreateDto;
+import application.repositories.PrisonerRepository;
+import application.repositories.StudyRepository;
+import domain.entities.Prisoner;
+import domain.entities.Study;
 
 public class StudyService {
 
     private final StudyRepository studyRepository;
     private final PrisonerRepository prisonerRepository;
 
-    public StudyService() {
-        this.studyRepository = new StudyRepositoryImpl();
-        this.prisonerRepository = new PrisonerRepository();
+    public StudyService(StudyRepository studyRepository, PrisonerRepository prisonerRepository) {
+        this.studyRepository = studyRepository;
+        this.prisonerRepository = prisonerRepository;
     }
 
     public Study createStudy(StudyCreateDto dto) throws SQLException {

@@ -17,7 +17,11 @@ import java.util.UUID;
 public class BookController implements HttpHandler {
 
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private final BookService service = new BookService();
+    private final BookService service;
+
+    public BookController(BookService service) {
+        this.service = service;
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

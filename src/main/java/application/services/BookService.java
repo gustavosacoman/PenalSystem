@@ -4,8 +4,8 @@ import application.dtos.BookCreateDto;
 import domain.entities.Book;
 import domain.entities.Prisoner;
 import domain.exceptions.MaxNumberOfBooksException;
-import infrastructure.repositories.BookRepositoryImpl;
-import infrastructure.repositories.PrisonerRepository;
+import application.repositories.BookRepository;
+import application.repositories.PrisonerRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -14,12 +14,12 @@ import java.util.UUID;
 
 public class BookService {
 
-    private final BookRepositoryImpl bookRepository;
+    private final BookRepository bookRepository;
     private final PrisonerRepository prisonerRepository;
 
-    public BookService() {
-        this.bookRepository = new BookRepositoryImpl();
-        this.prisonerRepository = new PrisonerRepository();
+    public BookService(BookRepository bookRepository, PrisonerRepository prisonerRepository) {
+        this.bookRepository = bookRepository;
+        this.prisonerRepository = prisonerRepository;
     }
 
     public Book createBook(BookCreateDto dto) throws SQLException {

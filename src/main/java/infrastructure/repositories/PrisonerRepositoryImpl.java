@@ -1,5 +1,6 @@
 package infrastructure.repositories;
 
+import application.repositories.PrisonerRepository;
 import infrastructure.ConnectionFactory;
 
 import java.sql.Connection;
@@ -14,8 +15,9 @@ import java.util.UUID;
 
 import domain.entities.Prisoner;
 
-public class PrisonerRepository {
+public class PrisonerRepositoryImpl implements PrisonerRepository {
 
+    @Override
     public void add(Prisoner prisoner) throws SQLException {
         String sql = "INSERT INTO Prisoners(Id, Name, BirthDate, CPF, ArrivalDate, " +
                 "OriginalReleaseDate, UpdatedReleaseDate, BooksCounter, CurrentYear)" +
@@ -39,6 +41,7 @@ public class PrisonerRepository {
         }
     }
 
+    @Override
     public void update(Prisoner p) throws SQLException{
         String query = "UPDATE Prisoners SET Name = ?, BirthDate = ?, " +
                 "ArrivalDate = ?, OriginalReleaseDate = ?, UpdatedReleaseDate = ?, " +
@@ -62,6 +65,7 @@ public class PrisonerRepository {
         }
     }
 
+    @Override
     public List<Prisoner> getAll() throws SQLException {
         String query = "SELECT * FROM Prisoners";
         List<Prisoner> prisoners = new ArrayList<>();
@@ -92,6 +96,7 @@ public class PrisonerRepository {
         return p;
     }
 
+    @Override
     public Prisoner getPrisonerById(UUID id) throws SQLException {
         String query = "SELECT * FROM Prisoners WHERE id = ?";
 
@@ -122,6 +127,7 @@ public class PrisonerRepository {
         return null;
     }
 
+    @Override
     public void updateReleaseDateById(UUID prisonerId, LocalDate updatedReleaseDate) throws SQLException {
         String query = "UPDATE Prisoners SET UpdatedReleaseDate = ? WHERE id = ?";
         try (Connection conn = ConnectionFactory.getConnection();
@@ -133,6 +139,7 @@ public class PrisonerRepository {
     }
 
 
+    @Override
     public Prisoner getPrisonerBycpf(String cpf) throws SQLException{
         String query = "SELECT * from Prisoners WHERE cpf = ?";
         try (Connection conn = ConnectionFactory.getConnection();
@@ -162,6 +169,7 @@ public class PrisonerRepository {
         return null;
     }
 
+    @Override
     public void DeletePrisonerBycpf(String cpf) throws  SQLException{
 
         String query = "DELETE FROM Prisoners Where cpf = ?";
@@ -175,6 +183,7 @@ public class PrisonerRepository {
         }
     }
 
+    @Override
     public void DeletePrisonerById(UUID id) throws  SQLException{
 
         String query = "DELETE FROM Prisoners Where id = ?";
@@ -187,7 +196,5 @@ public class PrisonerRepository {
             stmt.executeUpdate();
         }
     }
-
-
 
 }
