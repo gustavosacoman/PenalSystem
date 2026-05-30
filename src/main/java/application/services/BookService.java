@@ -33,6 +33,7 @@ public class BookService {
 
         if (prisoner.getCurrentYear() != LocalDate.now().getYear()) {
             prisoner.setBooksCounter(0);
+            prisoner.setCurrentYear(LocalDate.now().getYear());
         }
 
         if (booksCounter >= 12) {

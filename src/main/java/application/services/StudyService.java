@@ -75,7 +75,7 @@ public class StudyService {
 
         Prisoner prisoner = prisonerRepository.getPrisonerById(study.getPrisonerId());
 
-        prisoner.setUpdatedReleaseDate(prisoner.getUpdatedReleaseDate().plusDays(3));
+        prisoner.setUpdatedReleaseDate(prisoner.getUpdatedReleaseDate().plusDays(1));
 
         prisonerRepository.update(prisoner);
 
