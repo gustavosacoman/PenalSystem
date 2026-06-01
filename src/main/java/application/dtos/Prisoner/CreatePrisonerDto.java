@@ -8,5 +8,7 @@ public record CreatePrisonerDto (
     LocalDate birthDate,
     LocalDate arrivalDate,
     LocalDate originalReleaseDate,
-    int currentYear
+    int currentYear,
+    String zipCode,
+    String streetNumber
 ) {}

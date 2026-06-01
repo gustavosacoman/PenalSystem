@@ -1,9 +1,16 @@
 package application.services;
 
+import application.dtos.Prisoner.CompleteAddressDto;
 import application.dtos.Prisoner.UpdatePrisonerDto;
 import application.repositories.PrisonerRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.entities.Prisoner;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -59,7 +66,7 @@ public class PrisonerService {
     }
 
 
-    public void addPrisoner(CreatePrisonerDto addDto) throws SQLException{
+    public void addPrisoner(CreatePrisonerDto addDto) throws SQLException, Exception{
 
         Prisoner alreadyExist = prisonerRepository.getPrisonerBycpf(addDto.cpf());
 
@@ -76,6 +83,8 @@ public class PrisonerService {
             throw new IllegalArgumentException("Original release date cannot be in the past.");
         }
 
+        var address = GetExternalAddress(addDto.zipCode());
+
         prisoner.setId(UUID.randomUUID());
         prisoner.setName(addDto.name());
         prisoner.setCpf(addDto.cpf());
@@ -87,10 +96,15 @@ public class PrisonerService {
         prisoner.setOriginalReleaseDate(addDto.originalReleaseDate());
         prisoner.setUpdatedReleaseDate(addDto.originalReleaseDate());
 
+        prisoner.setZipCode(address.zipCode);
+        prisoner.setStreetNumber(addDto.streetNumber());
+        prisoner.setStreet(address.street);
+        prisoner.setCity(address.city);
+        prisoner.setState(address.state);
         prisonerRepository.add(prisoner);
     }
 
-    public void updatePrisoner(UpdatePrisonerDto dto, UUID id, String cpf) throws  SQLException{
+    public void updatePrisoner(UpdatePrisonerDto dto, UUID id, String cpf) throws  SQLException, Exception{
 
         if (dto == null)
             throw new NullPointerException("dto cannot be null");
@@ -128,6 +142,19 @@ public class PrisonerService {
         if (dto.originalReleaseDate() != null)
             actualPrisoner.setOriginalReleaseDate(dto.originalReleaseDate());
 
+        if (dto.zipCode() != null){
+            var address = GetExternalAddress(dto.zipCode());
+
+            actualPrisoner.setZipCode(dto.zipCode());
+            actualPrisoner.setStreet(address.street);
+            actualPrisoner.setCity(address.city);
+            actualPrisoner.setState(address.state);
+        }
+
+        if (dto.streetNumber() != null){
+            actualPrisoner.setStreetNumber(dto.streetNumber());
+        }
+
         prisonerRepository.update(actualPrisoner);
     }
 
@@ -154,6 +181,37 @@ public class PrisonerService {
         }
 
         prisonerRepository.DeletePrisonerById(id);
+    }
+
+    private CompleteAddressDto GetExternalAddress(String zipCode) throws Exception {
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://viacep.com.br/ws/" + zipCode.replace("-","") + "/json/"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client
+                .send(request, HttpResponse.BodyHandlers.ofString());
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(response.body());
+
+        if (jsonNode.has("erro") && jsonNode.get("erro").asBoolean()) {
+            throw new IllegalArgumentException("Zip code not found via ViaCEP.");
+        }
+
+        String street = jsonNode.path("logradouro").asText();
+        String city = jsonNode.path("localidade").asText();
+        String state = jsonNode.path("uf").asText();
+        CompleteAddressDto address = new CompleteAddressDto(
+                zipCode,
+                street,
+                city,
+                state
+        );
+
+        return address;
     }
 
 }

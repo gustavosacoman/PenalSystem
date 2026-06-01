@@ -19,7 +19,12 @@ CREATE TABLE Prisoners (
     CurrentYear INT NOT NULL,
     Name VARCHAR(100) NOT NULL,
     BirthDate VARCHAR(50) NOT NULL,
-    CPF CHAR(11) NOT NULL
+    CPF CHAR(11) NOT NULL,
+    ZipCode VARCHAR (8),
+    Street VARCHAR (255),
+    Number VARCHAR (4),
+    City VARCHAR (255),
+    State CHAR(2)
 );
 
 -- Books
