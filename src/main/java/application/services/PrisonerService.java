@@ -104,7 +104,7 @@ public class PrisonerService {
         prisonerRepository.add(prisoner);
     }
 
-    public void updatePrisoner(UpdatePrisonerDto dto, UUID id, String cpf) throws  SQLException{
+    public void updatePrisoner(UpdatePrisonerDto dto, UUID id, String cpf) throws  SQLException, Exception{
 
         if (dto == null)
             throw new NullPointerException("dto cannot be null");
@@ -141,6 +141,19 @@ public class PrisonerService {
 
         if (dto.originalReleaseDate() != null)
             actualPrisoner.setOriginalReleaseDate(dto.originalReleaseDate());
+
+        if (dto.zipCode() != null){
+            var address = GetExternalAddress(dto.zipCode());
+
+            actualPrisoner.setZipCode(dto.zipCode());
+            actualPrisoner.setStreet(address.street);
+            actualPrisoner.setCity(address.city);
+            actualPrisoner.setState(address.state);
+        }
+
+        if (dto.streetNumber() != null){
+            actualPrisoner.setStreetNumber(dto.streetNumber());
+        }
 
         prisonerRepository.update(actualPrisoner);
     }

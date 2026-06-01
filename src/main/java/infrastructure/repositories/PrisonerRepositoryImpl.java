@@ -50,7 +50,8 @@ public class PrisonerRepositoryImpl implements PrisonerRepository {
     public void update(Prisoner p) throws SQLException{
         String query = "UPDATE Prisoners SET Name = ?, BirthDate = ?, " +
                 "ArrivalDate = ?, OriginalReleaseDate = ?, UpdatedReleaseDate = ?, " +
-                "BooksCounter = ?, CurrentYear = ? " +
+                "BooksCounter = ?, CurrentYear = ?, ZipCode = ?, Street = ?, Number = ?," +
+                "City = ?, State = ? " +
                 "WHERE id = ? OR cpf = ?";
 
         try(Connection conn = ConnectionFactory.getConnection();
@@ -63,9 +64,14 @@ public class PrisonerRepositoryImpl implements PrisonerRepository {
             stmt.setDate(5, java.sql.Date.valueOf(p.getUpdatedReleaseDate()));
             stmt.setInt(6, p.getBooksCounter());
             stmt.setInt(7, p.getCurrentYear());
+            stmt.setString(8, p.getZipCode());
+            stmt.setString(9, p.getStreet());
+            stmt.setString(10, p.getStreetNumber());
+            stmt.setString(11, p.getCity());
+            stmt.setString(12, p.getState());
+            stmt.setString(13, p.getId().toString());
+            stmt.setString(14, p.getCpf());
 
-            stmt.setString(8, p.getId().toString());
-            stmt.setString(9, p.getCpf());
             stmt.executeUpdate();
         }
     }
@@ -98,6 +104,11 @@ public class PrisonerRepositoryImpl implements PrisonerRepository {
         p.setUpdatedReleaseDate(rs.getDate("UpdatedReleaseDate").toLocalDate());
         p.setBooksCounter(rs.getInt("BooksCounter"));
         p.setCurrentYear(rs.getInt("CurrentYear"));
+        p.setZipCode(rs.getString("zipCode"));
+        p.setStreetNumber(rs.getString("number"));
+        p.setStreet(rs.getString("Street"));
+        p.setCity(rs.getString("City"));
+        p.setState(rs.getString("State"));
         return p;
     }
 
@@ -125,6 +136,12 @@ public class PrisonerRepositoryImpl implements PrisonerRepository {
 
                 p.setBooksCounter(rs.getInt("BooksCounter"));
                 p.setCurrentYear(rs.getInt("CurrentYear"));
+
+                p.setZipCode(rs.getString("zipCode"));
+                p.setStreetNumber(rs.getString("number"));
+                p.setStreet(rs.getString("Street"));
+                p.setCity(rs.getString("City"));
+                p.setState(rs.getString("State"));
 
                 return p;
             }
@@ -167,6 +184,12 @@ public class PrisonerRepositoryImpl implements PrisonerRepository {
 
                 p.setBooksCounter(rs.getInt("BooksCounter"));
                 p.setCurrentYear(rs.getInt("CurrentYear"));
+
+                p.setZipCode(rs.getString("zipCode"));
+                p.setStreetNumber(rs.getString("number"));
+                p.setStreet(rs.getString("Street"));
+                p.setCity(rs.getString("City"));
+                p.setState(rs.getString("State"));
 
                 return p;
             }

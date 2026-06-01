@@ -9,5 +9,7 @@ public record UpdatePrisonerDto (
         LocalDate updatedReleaseDate,
         LocalDate originalReleaseDate,
         int booksCounter,
-        int currentYear
+        int currentYear,
+        String zipCode,
+        String streetNumber
 ){}
