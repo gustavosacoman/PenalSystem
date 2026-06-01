@@ -20,8 +20,8 @@ public class PrisonerRepositoryImpl implements PrisonerRepository {
     @Override
     public void add(Prisoner prisoner) throws SQLException {
         String sql = "INSERT INTO Prisoners(Id, Name, BirthDate, CPF, ArrivalDate, " +
-                "OriginalReleaseDate, UpdatedReleaseDate, BooksCounter, CurrentYear)" +
-                "VALUES (?,?,?,?,?,?,?,?,?)";
+                "OriginalReleaseDate, UpdatedReleaseDate, BooksCounter, CurrentYear, ZipCode," +
+                "Street, Number, City, State)VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -35,6 +35,11 @@ public class PrisonerRepositoryImpl implements PrisonerRepository {
             stmt.setDate(7, java.sql.Date.valueOf(prisoner.getUpdatedReleaseDate()));
             stmt.setInt(8, prisoner.getBooksCounter());
             stmt.setInt(9, prisoner.getCurrentYear());
+            stmt.setString(10, prisoner.getZipCode());
+            stmt.setString(11, prisoner.getStreet());
+            stmt.setString(12, prisoner.getStreetNumber());
+            stmt.setString(13, prisoner.getCity());
+            stmt.setString(14, prisoner.getState());
 
             stmt.executeUpdate();
 
